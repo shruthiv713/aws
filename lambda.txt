@@ -1,0 +1,65 @@
+var AWS = require('aws-sdk');
+var docClient = new AWS.DynamoDB.DocumentClient();
+ const querystring = require('querystring');
+
+exports.handler = (event, context,callback)=>{
+
+    // TODO implement
+    //const para =querystring.parse(
+const unm = event.unm;
+const pswd = event.pswd;
+console.log(unm);
+ var params = {
+        TableName: "hotel_users",
+        KeyConditionExpression: "#unm = :unm",
+        ProjectionExpression:"pswd",
+        ExpressionAttributeNames:{
+        "#unm": "unm"
+    },
+    ExpressionAttributeValues: {
+        ":unm":unm
+    }
+        
+        
+        };
+        
+
+
+        
+    /*var params = {
+        TableName: "hotel_users",
+        KeyConditionExpression: "#unm = :unm",
+        ProjectionExpression:"pswd",
+        ExpressionAttributeNames:{
+        "#unm": "unm"
+    },
+    ExpressionAttributeValues: {
+        ":unm":"a2b"
+    }
+        
+        
+        };*/
+        console.log("Hello*(000)");
+    docClient.query(params, function(err, data) {
+    if (err) {
+        console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Query succeeded.");
+        data.Items.forEach(function(item) {
+            
+            console.log(" -", item.pswd + ": ");
+            if(item.pswd==pswd)
+            {
+                console.log("pswd match");
+                var res={login:"yes"}; 
+                callback(null,res);
+        
+                }
+            else
+          {  var res={login:"no"}; 
+                callback(null,res); }
+            
+        });
+    }
+    });
+   }
